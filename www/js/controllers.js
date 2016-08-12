@@ -2,49 +2,44 @@ angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope) {})
 
-.controller('ChatsCtrl', function($scope,$cordovaGeolocation,$cordovaNetwork,$ionicPlatform,$cordovaDeviceMotion) {
+.controller('ChatsCtrl', function($q,$scope,$cordovaGeolocation,$cordovaNetwork,$ionicPlatform,$cordovaDeviceOrientation,NetworkSpeed) {
   $scope.signal =0;
   $scope.lat =0;
   $scope.long =0;
   $scope.type =0;
   $scope.X =0;
-  $scope.Y =0;
-  $scope.Z =0;
-  $scope.time = 0;
+  $scope.network=0;
+  $scope.date =0;
 
 
   var posOptions = {timeout: 10000, enableHighAccuracy: true};
 
-  $ionicPlatform.ready(function() {
+  $scope.getInfo = function(){
+    $scope.date = new Date();
+    var netPromise = NetworkSpeed.getNetSpeed();
+    var locationPromise = $cordovaGeolocation.getCurrentPosition(posOptions);
+    var headPromise = $cordovaDeviceOrientation.getCurrentHeading();
 
-    $cordovaGeolocation
-      .getCurrentPosition(posOptions)
-      .then(function (position) {
-        $scope.lat  = position.coords.latitude
-        $scope.long = position.coords.longitude
-      }, function(err) {
-        // error
-      });
-
-    try{
-      $scope.netType = $cordovaNetwork.getNetwork();
-    }catch(e) {
-      console.log(e);
-    }
-
-    $cordovaDeviceMotion.getCurrentAcceleration().then(function(result) {
-      $scope.X = result.x;
-      $scope.Y = result.y;
-      $scope.Z = result.z;
-      $scope.time = result.timestamp;
-    }, function(err) {
-      // An error occurred. Show a message to the user
+    $q.all([netPromise,locationPromise,headPromise]).then(function(res){
+      var netInfo = res[0];
+      var position = res[1];
+      var head = res[2];
+      $scope.network=netInfo.speed;
+      $scope.netType = netInfo.type;
+      $scope.lat  = position.coords.latitude;
+      $scope.long = position.coords.longitude;
+      $scope.X = head.magneticHeading;
+      $scope.Z = head.headingAccuracy;
     });
 
-    //var isOnline = $cordovaNetwork.isOnline();
-    //
-    //var isOffline = $cordovaNetwork.isOffline();
+  };
+
+  $ionicPlatform.ready(function() {
+
+    $scope.getInfo();
+
   });
+
 
 })
 

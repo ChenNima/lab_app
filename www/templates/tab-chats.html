@@ -1,10 +1,12 @@
 <ion-view view-title="Chats">
   <ion-content>
     <div>
-      <a >经:{{lat}}</a>
-      <a >纬:{{long}}</a>
+      <p>当前时间:{{date}}</p>
+      <p >经:{{lat}} 纬:{{long}}</p>
       <p >网络:{{netType}}</p>
-      <p>time:{{time}} X:{{X}} Y:{{Y}} Z:{{Z}}</p>
+      <p> 方向:{{X}} 精确度:{{Z}}</p>
+      <p> 网速:{{network}}</p>
+      <button class="btn btn-primary" ng-click="getInfo()">update</button>
     </div>
   </ion-content>
 </ion-view>

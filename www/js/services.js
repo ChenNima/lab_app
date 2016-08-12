@@ -1,50 +1,48 @@
 angular.module('starter.services', [])
 
-.factory('Chats', function() {
-  // Might use a resource here that returns a JSON array
+  .factory('NetworkSpeed', function ($q, $cordovaNetwork, $ionicPlatform, $http) {
+    var deferred;
+    var downloadSize = 97615;
+    var imageAddr = "http://file.mrchen.pub/test.jpg";
+    var startTime, endTime = 0;
+    var netType = 0;
 
-  // Some fake testing data
-  var chats = [{
-    id: 0,
-    name: 'Ben Sparrow',
-    lastText: 'You on your way?',
-    face: 'img/ben.png'
-  }, {
-    id: 1,
-    name: 'Max Lynx',
-    lastText: 'Hey, it\'s me',
-    face: 'img/max.png'
-  }, {
-    id: 2,
-    name: 'Adam Bradleyson',
-    lastText: 'I should buy a boat',
-    face: 'img/adam.jpg'
-  }, {
-    id: 3,
-    name: 'Perry Governor',
-    lastText: 'Look at my mukluks!',
-    face: 'img/perry.png'
-  }, {
-    id: 4,
-    name: 'Mike Harrington',
-    lastText: 'This is wicked good ice cream.',
-    face: 'img/mike.png'
-  }];
-
-  return {
-    all: function() {
-      return chats;
-    },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
-    },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
-        }
-      }
-      return null;
+    function showResults(startTime, endTime, downloadSize) {
+        var duration = (endTime - startTime) / 1000; //Math.round()
+        var bitsLoaded = downloadSize * 8;
+        var speedBps = (bitsLoaded / duration).toFixed(2);
+        var speedKbps = (speedBps / 1024).toFixed(2);
+        var finalSpeed = (speedKbps / 8);
+        deferred.resolve({type:netType,speed:finalSpeed});
     }
-  };
-});
+
+    return {
+      getNetSpeed: function () {
+        deferred = $q.defer();
+        $ionicPlatform.ready(function () {
+          try {
+            if ($cordovaNetwork.isOnline()) {
+              netType = $cordovaNetwork.getNetwork();
+              var r = Math.round(Math.random() * 10000);
+              startTime = (new Date()).getTime();
+              $http.get(imageAddr+ "?subins=" + r)
+                .success(function (response) {
+                  endTime = (new Date()).getTime();
+                  showResults(startTime, endTime, downloadSize);
+                  }
+                )
+                .error(function(err){
+                console.log(err);
+              });
+            }else{
+              deferred.resolve({type:0,speed:0});
+            }
+          } catch (e) {
+            console.log(e);
+            deferred.resolve({type:0,speed:0});
+          }
+        });
+        return deferred.promise;
+      }
+    }
+  });
