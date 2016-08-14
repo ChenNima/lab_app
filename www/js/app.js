@@ -23,6 +23,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
   });
 
   Restangular.setBaseUrl('https://www.mrchen.pub/');
+  //Restangular.setBaseUrl('http://localhost:3000');
 })
 
 .config(function($stateProvider, $urlRouterProvider) {

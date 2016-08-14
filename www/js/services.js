@@ -35,11 +35,11 @@ angular.module('starter.services', [])
                 console.log(err);
               });
             }else{
-              deferred.resolve({type:0,speed:0});
+              deferred.resolve({type:'offline',speed:0});
             }
           } catch (e) {
             console.log(e);
-            deferred.resolve({type:0,speed:0});
+            deferred.resolve({type:'offline',speed:0});
           }
         });
         return deferred.promise;

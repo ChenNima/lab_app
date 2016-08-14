@@ -36,6 +36,9 @@
         },
         "cordova-plugin-device-orientation": {
             "PACKAGE_NAME": "com.ionicframework.example524096"
+        },
+        "org.pbernasconi.progressindicator": {
+            "PACKAGE_NAME": "com.ionicframework.example524096"
         }
     },
     "dependent_plugins": {
