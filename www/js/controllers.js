@@ -2,7 +2,7 @@ angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope) {})
 
-.controller('ChatsCtrl', function($q,$scope,$ionicLoading,$timeout,$cordovaGeolocation,$cordovaNetwork,$ionicPlatform,$cordovaDeviceOrientation,Restangular,NetworkSpeed) {
+.controller('LabCtrl', function($q,$scope,$ionicLoading,$timeout,$cordovaGeolocation,$cordovaNetwork,$ionicPlatform,$cordovaDeviceOrientation,Restangular,NetworkSpeed) {
   $scope.signal =0;
   $scope.lat =0;
   $scope.long =0;
@@ -13,14 +13,24 @@ angular.module('starter.controllers', [])
   $scope.Z =0;
   $scope.labDatas =[];
 
+  $scope.interval = {
+    interval:300000,
+    currentInterval:0,
+    rest:0
+  };
+
+  var restTimer;
+
+  $scope.timer = null;
+
 
   var posOptions = {timeout: 10000, enableHighAccuracy: true};
 
-  var labData = function(date,lat,long,netwrok,heading,accuracy,bandwidth){
+  var labData = function(date,lat,long,network,heading,accuracy,bandwidth){
     this.date = date;
     this.lat = lat;
     this.long = long;
-    this.network = netwrok;
+    this.network = network;
     this.heading = heading;
     this.accuracy = accuracy;
     this.bandwidth = bandwidth;
@@ -51,6 +61,11 @@ angular.module('starter.controllers', [])
       if(tempLabData.network === 'offline'){
         $ionicLoading.hide();
         $scope.labDatas.push(tempLabData);
+        return;
+      }else if($scope.labDatas.length){
+        $ionicLoading.hide();
+        $scope.labDatas.push(tempLabData);
+        $scope.submitData();
         return;
       }
       Restangular.one('/').post('lab',tempLabData).then(function(data){
@@ -84,6 +99,29 @@ angular.module('starter.controllers', [])
     }
   };
 
+  $scope.startInterval = function(){
+    $scope.interval.currentInterval = $scope.interval.interval;
+    $scope.interval.rest = 0;
+    $scope.timer = setInterval(function(){
+      $scope.interval.rest = 0;
+      $scope.getInfo();
+    },$scope.interval.interval);
+
+    restTimer = setInterval(function(){
+      $scope.$apply(function(){
+        $scope.interval.rest +=1000;
+      });
+    },1000)
+  };
+
+  $scope.stopInterval = function(){
+    if($scope.timer){
+      clearInterval($scope.timer);
+      clearInterval(restTimer);
+    }
+    $scope.timer = null;
+  };
+
   $ionicPlatform.ready(function() {
 
     $scope.getInfo();
@@ -94,7 +132,6 @@ angular.module('starter.controllers', [])
 })
 
 .controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
 })
 
 .controller('AccountCtrl', function($scope) {

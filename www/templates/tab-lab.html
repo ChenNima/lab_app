@@ -1,0 +1,46 @@
+<ion-view view-title="Lab">
+  <ion-content>
+    <div >
+      <div class="list card">
+        <div class="item item-divider">
+          当前数据
+        </div>
+        <p class="item item-icon-left"><b class="text-primary"><i class="icon ion-clock"></i></b>{{date}}</p>
+        <p class="item item-icon-left"><b class="text-primary"><i class="icon ion-location"></i></b>经:{{lat.toFixed(4)}}
+          纬:{{long.toFixed(4)}}</p>
+        <p class="item item-icon-left"><b class="text-primary"><i class="icon ion-connection-bars"></i></b>{{netType}}
+        </p>
+        <p class="item item-icon-left"><b class="text-primary"><i class="icon ion-navigate"></i></b> 方向:{{X}}° 精确度:{{Z}}
+        </p>
+        <p class="item item-icon-left"><b class="text-primary"><i class="icon ion-wifi"></i></b>{{network}} KB/S</p>
+        <div ng-show="labDatas.length" class="item item-divider">
+          当前待上传数据数:{{labDatas.length}}
+        </div>
+      </div>
+      <div class="button-bar">
+        <button class="button button-positive button-outline" ng-click="getInfo()">
+          获取数据
+        </button>
+        <button class="button button-balanced button-outline" ng-click="submitData()" ng-if="labDatas.length">
+          <i class="icon ion-upload"></i>
+          上传数据
+        </button>
+      </div>
+      <div class="list" style="margin-top: 13px">
+        <div class="item range range-balanced">
+          <a>0.5 min</a>
+          <input type="range" name="volume" min="30000" max="1800000" ng-model="interval.interval">
+          <a>30 min</a>
+        </div>
+        <p class="item">当前时间间隔: {{(interval.interval/60000).toFixed(2)}}分钟, 剩余时间:{{((interval.currentInterval-interval.rest)/60000).toFixed(2)}}分钟</p>
+      </div>
+      <button ng-show="!timer" class="button button-balanced button-outline button-block" ng-click="startInterval()">
+        开始自动获取
+      </button>
+      <button ng-show="timer" class="button button-assertive button-assertive button-block" ng-click="stopInterval()">
+        停止
+      </button>
+      <p>{{dataErr}}</p>
+    </div>
+  </ion-content>
+</ion-view>
