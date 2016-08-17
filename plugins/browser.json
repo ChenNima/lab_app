@@ -16,6 +16,9 @@
         "cordova-plugin-device-motion": {
             "PACKAGE_NAME": "com.ionicframework.example524096"
         },
+        "cordova-plugin-device-orientation": {
+            "PACKAGE_NAME": "com.ionicframework.example524096"
+        },
         "cordova-plugin-geolocation": {
             "PACKAGE_NAME": "com.ionicframework.example524096"
         },
@@ -32,9 +35,6 @@
             "PACKAGE_NAME": "com.ionicframework.example524096"
         },
         "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.ionicframework.example524096"
-        },
-        "cordova-plugin-device-orientation": {
             "PACKAGE_NAME": "com.ionicframework.example524096"
         },
         "org.pbernasconi.progressindicator": {

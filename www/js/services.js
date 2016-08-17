@@ -6,8 +6,13 @@ angular.module('starter.services', [])
     var imageAddr = "http://file.mrchen.pub/test.jpg";
     var startTime, endTime = 0;
     var netType = 0;
+    var timeOut = 0;
 
     function showResults(startTime, endTime, downloadSize) {
+      if(timeOut){
+        clearTimeout(timeOut);
+        timeOut =0;
+      }
         var duration = (endTime - startTime) / 1000; //Math.round()
         var bitsLoaded = downloadSize * 8;
         var speedBps = (bitsLoaded / duration).toFixed(2);
@@ -25,6 +30,9 @@ angular.module('starter.services', [])
               netType = $cordovaNetwork.getNetwork();
               var r = Math.round(Math.random() * 10000);
               startTime = (new Date()).getTime();
+              timeOut = setTimeout(function(){
+                deferred.resolve({type:'offline',speed:0});
+              },20000);
               $http.get(imageAddr+ "?subins=" + r)
                 .success(function (response) {
                   endTime = (new Date()).getTime();
